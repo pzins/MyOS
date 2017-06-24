@@ -1,8 +1,10 @@
 #include "types.h"
 #include "gdt.h"
 #include "interrupts.h"
+#include "driver.h"
 #include "keyboard.h"
 #include "mouse.h"
+
 
 void printf(char* str) {
     static uint16_t*  VideoMemory = (uint16_t*) 0xB8000;
@@ -44,6 +46,70 @@ void printf(char* str) {
     }
 }
 
+void printHex(uint8_t n) {
+    char* foo = "00";
+    char* hex = "0123456789ABCDEF";
+    foo[0] = hex[(n >> 4) & 0xF];
+    foo[1] = hex[n & 0xF];
+    printf(foo);
+}
+
+class PrintfKeyboardEventHandler : public KeyboardEventHandler
+{
+public:
+    void onKeyDown(char c) {
+        char* foo = " ";
+        foo[0] = c;
+        printf(foo);
+    }
+};
+
+class MouseToConsole : public MouseEventHandler
+{
+private:
+    int8_t x, y;
+public:
+
+    MouseToConsole() {
+        // offset = 0;
+        // buttons = 0;
+
+        static uint16_t*  VideoMemory = (uint16_t*) 0xB8000;
+
+
+        VideoMemory[80*12+40] = ((VideoMemory[80*12+40] & 0xF000) >> 4) |
+                              ((VideoMemory[80*12+40] & 0x0F00) << 4) |
+                              (VideoMemory[80*12+40] & 0x00FF);
+
+
+    }
+    void onMouseMove(int xoffset, int yoffset) {
+        static uint16_t*  VideoMemory = (uint16_t*) 0xB8000;
+
+        VideoMemory[80*y+x] = ((VideoMemory[80*y+x] & 0xF000) >> 4) |
+                          ((VideoMemory[80*y+x] & 0x0F00) << 4) |
+                          (VideoMemory[80*y+x] & 0x00FF);
+
+        x += xoffset;
+        if(x < 0) x = 0;
+        if(x >= 80) x = 79;
+
+        y -= yoffset;
+        if(y < 0) y = 0;
+        if(y >= 25) y = 24;
+
+
+        VideoMemory[80*y+x] = ((0xFFFF & 0xF000) >> 4) |
+                              ((VideoMemory[80*y+x] & 0x0F00) << 4) |
+                              (VideoMemory[80*y+x] & 0x00FF);
+    }
+    void onMouseDown(uint8_t button) {
+
+    }
+    void onMouseUp(uint8_t button) {
+
+    }
+};
 
 typedef void (*constructor)();
 extern "C" constructor start_ctors;
@@ -57,13 +123,24 @@ extern "C" void callConstrutors() {
 extern "C" void kernelMain(void* mutliboot_structure, uint32_t magicnumber)
 {
     printf("Lacazette Tolisso!!!\n");
-    printf("MENDY MARCAL TRAORE");
     GlobalDescriptorTable gdt;
     InterruptManager interrupts(&gdt);
-    KeyboardDriver keyboard(&interrupts);
-    MouseDriver mouse(&interrupts);
+    printf("Initializing Hardware, Stage 1\n");
 
+    DriverManager drvManager;
+
+    PrintfKeyboardEventHandler kbhandler;
+    KeyboardDriver keyboard(&interrupts, &kbhandler);
+    drvManager.AddDriver(&keyboard);
+
+    MouseToConsole mousehandler;
+    MouseDriver mouse(&interrupts, &mousehandler);
+    drvManager.AddDriver(&mouse);
+    printf("Initializing Hardware, Stage 2\n");
+
+    drvManager.ActivateAll();
     interrupts.Activate();
+    printf("Initializing Hardware, Stage 3\n");
 
 
     while (1);
