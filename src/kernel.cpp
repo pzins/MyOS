@@ -62,6 +62,10 @@ public:
         foo[0] = c;
         printf(foo);
     }
+
+    void OnKeyUp(char c) {
+
+    }
 };
 
 class MouseToConsole : public MouseEventHandler

@@ -13,24 +13,20 @@ data_segment_selector(0, 64*1024*1024, 0x92)
 }
 
 
-GlobalDescriptorTable::~GlobalDescriptorTable()
-{
+GlobalDescriptorTable::~GlobalDescriptorTable() {
 
 }
 
-uint16_t GlobalDescriptorTable::DataSegmentSelector()
-{
+uint16_t GlobalDescriptorTable::DataSegmentSelector() {
     return (uint8_t*) &data_segment_selector - (uint8_t*)this;
 }
 
-uint16_t GlobalDescriptorTable::CodeSegmentSelector()
-{
+uint16_t GlobalDescriptorTable::CodeSegmentSelector() {
     return (uint8_t*) &code_segment_selector - (uint8_t*)this;
 }
 
 
-GlobalDescriptorTable::SegmentDescriptor::SegmentDescriptor(uint32_t base, uint32_t limit, uint8_t flags)
-{
+GlobalDescriptorTable::SegmentDescriptor::SegmentDescriptor(uint32_t base, uint32_t limit, uint8_t flags) {
     uint8_t* target = (uint8_t*)this;
     if(limit <= 65536) {
         target[6] = 0x40;

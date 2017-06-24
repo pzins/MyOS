@@ -9,14 +9,15 @@ InterruptHandler::InterruptHandler(uint8_t interrupt_number_, InterruptManager* 
 interrupt_number(interrupt_number_), interrupt_manager(interrupt_manager_) {
     interrupt_manager->handlers[interrupt_number] = this;
 }
+
 InterruptHandler::~InterruptHandler() {
     if(interrupt_manager->handlers[interrupt_number] == this)
         interrupt_manager->handlers[interrupt_number] = 0;
 }
+
 uint32_t InterruptHandler::HandleInterrupt(uint32_t esp) {
     return esp;
 }
-
 
 
 InterruptManager::GateDescriptor InterruptManager::interrupt_descriptor_table[256];
@@ -83,7 +84,9 @@ pic_slave_data(0xA1)
 
 }
 
-InterruptManager::~InterruptManager() {}
+InterruptManager::~InterruptManager() {
+
+}
 
 void InterruptManager::Activate() {
     if(active_interrupt_manager != 0)
@@ -117,8 +120,6 @@ uint32_t InterruptManager::DoHandleInterrupt(uint8_t interrupt_number, uint32_t 
          printf("UNHANDLED INTERRUPT 0x");
          printHex(interrupt_number);
      }
-
-
 
     //only answers the pic for hardware interrupt
     if(0x20 <= interrupt_number && interrupt_number < 0x30) {

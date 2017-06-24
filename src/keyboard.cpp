@@ -1,9 +1,6 @@
 #include "keyboard.h"
 
 
-KeyboardEventHandler::KeyboardEventHandler() {
-
-}
 
 void KeyboardEventHandler::OnKeyUp(char) {
 
@@ -18,9 +15,9 @@ KeyboardDriver::KeyboardDriver(InterruptManager* manager, KeyboardEventHandler* 
 : InterruptHandler(0x21, manager),
 handler(handler_),
 data_port(0x60),
-command_port(0x64)
-{
+command_port(0x64) {
 }
+
 void KeyboardDriver::Activate() {
     while(command_port.Read() & 0x1)
         data_port.Read();

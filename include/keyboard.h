@@ -9,10 +9,9 @@
 class KeyboardEventHandler
 {
 public:
-    KeyboardEventHandler();
+    // KeyboardEventHandler();
     virtual void OnKeyDown(char);
     virtual void OnKeyUp(char);
-
 };
 
 

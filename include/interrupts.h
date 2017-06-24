@@ -32,11 +32,11 @@ protected:
     InterruptHandler* handlers[256];
     struct GateDescriptor
     {
-            uint16_t handler_adress_low_bits;
-            uint16_t gdt_code_segment_selector;
-            uint8_t reserved;
-            uint8_t access;
-            uint16_t handler_adress_high_bits;
+        uint16_t handler_adress_low_bits;
+        uint16_t gdt_code_segment_selector;
+        uint8_t reserved;
+        uint8_t access;
+        uint16_t handler_adress_high_bits;
     } __attribute__((packed));
 
     static GateDescriptor interrupt_descriptor_table[256];
@@ -48,8 +48,6 @@ protected:
     } __attribute__((packed));
 
     uint16_t hardware_interrupt_offset;
-
-    //static InterruptManager* ActivateInterruptManager;
 
     static void SetInterruptDescriptorTableEntry(
         uint8_t interrupt_number,
@@ -75,7 +73,7 @@ public:
     static void IgnoreInterruptRequest();
     static void HandleInterruptRequest0x01();  //keyboard int
     static void HandleInterruptRequest0x00();  //timer int
-    static void HandleInterruptRequest0x0C();  //timer int
+    static void HandleInterruptRequest0x0C();  //mouse int
 
     void Activate();
     void Deactivate();
