@@ -9,14 +9,14 @@
 .macro HandleException num
 .global _ZN16InterruptManager19HandleException\num\()Ev
  _ZN16InterruptManager19HandleException\num\()Ev:
-    movb $\num, (interruptnumber)
+    movb $\num, (interrupt_number)
     jmp int_bottom
 .endm
 
 .macro HandleInterruptRequest num
 .global _ZN16InterruptManager26HandleInterruptRequest\num\()Ev
 _ZN16InterruptManager26HandleInterruptRequest\num\()Ev:
-    movb $\num + IRQ_BASE, (interruptnumber)
+    movb $\num + IRQ_BASE, (interrupt_number)
     jmp int_bottom
 .endm
 
@@ -35,7 +35,7 @@ int_bottom:
 
 
     pushl %esp
-    push (interruptnumber)
+    push (interrupt_number)
     call _ZN16InterruptManager15HandleInterruptEhj
     add %esp, 6
     mov %eax, %esp
@@ -53,4 +53,4 @@ _ZN16InterruptManager22IgnoreInterruptRequestEv:
 
 
 .data
-    interruptnumber: .byte 0
+    interrupt_number: .byte 0

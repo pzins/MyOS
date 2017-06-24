@@ -7,15 +7,15 @@
 class Port
 {
 protected:
-    uint16_t portnumber;
-    Port(uint16_t portnumber);
+    uint16_t port_number;
+    Port(uint16_t port_number);
     ~Port();
 };
 
 class Port8bit : public Port
 {
 public:
-    Port8bit(uint16_t portnumber);
+    Port8bit(uint16_t port_number);
     ~Port8bit();
     virtual void Write(uint8_t data);
     virtual uint8_t Read();
@@ -24,7 +24,7 @@ public:
 class Port8bitSlow : public Port8bit
 {
 public:
-    Port8bitSlow(uint16_t portnumber);
+    Port8bitSlow(uint16_t port_number);
     ~Port8bitSlow();
     virtual void Write(uint8_t data);
 };
@@ -32,7 +32,7 @@ public:
 class Port16bit : public Port
 {
 public:
-    Port16bit(uint16_t portnumber);
+    Port16bit(uint16_t port_number);
     ~Port16bit();
     virtual void Write(uint16_t data);
     virtual uint16_t Read();
@@ -41,7 +41,7 @@ public:
 class Port32bit : public Port
 {
 public:
-    Port32bit(uint16_t portnumber);
+    Port32bit(uint16_t port_number);
     ~Port32bit();
     virtual void Write(uint32_t data);
     virtual uint32_t Read();

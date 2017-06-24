@@ -22,10 +22,10 @@ public:
         uint32_t Limit();
     } __attribute__((packed));
 
-    SegmentDescriptor nullSegmentSelector;
-    SegmentDescriptor unusedSegmentSelector;
-    SegmentDescriptor codeSegmentSelector;
-    SegmentDescriptor dataSegmentSelector;
+    SegmentDescriptor null_segment_selector;
+    SegmentDescriptor unused_segment_selector;
+    SegmentDescriptor code_segment_selector;
+    SegmentDescriptor data_segment_selector;
 
 public:
     GlobalDescriptorTable();

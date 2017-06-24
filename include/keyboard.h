@@ -6,13 +6,12 @@
 #include "port.h"
 #include "driver.h"
 
-
 class KeyboardEventHandler
 {
 public:
     KeyboardEventHandler();
-    virtual void onKeyDown(char);
-    virtual void onKeyUp(char);
+    virtual void OnKeyDown(char);
+    virtual void OnKeyUp(char);
 
 };
 
@@ -20,8 +19,8 @@ public:
 
 class KeyboardDriver : public InterruptHandler, public Driver
 {
-    Port8bit dataport;
-    Port8bit commandport;
+    Port8bit data_port;
+    Port8bit command_port;
 
     KeyboardEventHandler* handler;
 

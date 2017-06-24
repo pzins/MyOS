@@ -11,16 +11,16 @@ class MouseEventHandler
 {
 public:
     MouseEventHandler();
-    virtual void onActivate();
-    virtual void onMouseDown(uint8_t button);
-    virtual void onMouseUp(uint8_t button);
-    virtual void onMouseMove(int offsetx, int offsety);
+    virtual void OnActivate();
+    virtual void OnMouseDown(uint8_t button);
+    virtual void OnMouseUp(uint8_t button);
+    virtual void OnMouseMove(int offset_x, int offset_y);
 };
 
 class MouseDriver : public InterruptHandler, public Driver
 {
-    Port8bit dataport;
-    Port8bit commandport;
+    Port8bit data_port;
+    Port8bit command_port;
 
     uint8_t buffer[3];
     uint8_t offset;

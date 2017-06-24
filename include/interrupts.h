@@ -10,10 +10,10 @@ class InterruptManager;
 class InterruptHandler
 {
 protected:
-    uint8_t interruptNumber;
-    InterruptManager* interruptManager;
+    uint8_t interrupt_number;
+    InterruptManager* interrupt_manager;
 
-    InterruptHandler(uint8_t interruptNumber, InterruptManager* InterruptManager);
+    InterruptHandler(uint8_t interrupt_number_, InterruptManager* Interrupt_manager_);
     ~InterruptHandler();
 
 public:
@@ -28,18 +28,18 @@ class InterruptManager
 
 protected:
 
-    static InterruptManager* ActiveInterruptManager;
+    static InterruptManager* active_interrupt_manager;
     InterruptHandler* handlers[256];
     struct GateDescriptor
     {
-            uint16_t handlerAdressLowBits;
-            uint16_t gdt_codeSegmentSelector;
+            uint16_t handler_adress_low_bits;
+            uint16_t gdt_code_segment_selector;
             uint8_t reserved;
             uint8_t access;
-            uint16_t handlerAdressHighBits;
+            uint16_t handler_adress_high_bits;
     } __attribute__((packed));
 
-    static GateDescriptor interruptDescriptorTable[256];
+    static GateDescriptor interrupt_descriptor_table[256];
 
     struct InterruptDescriptorTablePointer
     {
@@ -47,30 +47,30 @@ protected:
         uint32_t base;
     } __attribute__((packed));
 
-    uint16_t hardwareInterruptOffset;
+    uint16_t hardware_interrupt_offset;
 
     //static InterruptManager* ActivateInterruptManager;
 
     static void SetInterruptDescriptorTableEntry(
-        uint8_t interruptNumber,
-        uint16_t codeSegmentSelectorOffset,
+        uint8_t interrupt_number,
+        uint16_t code_segment_selector_offset,
         void (*handler)(),
-        uint8_t DescriptoPrivilegeLevel,
-        uint8_t DescriptorType);
+        uint8_t descriptor_privilege_level,
+        uint8_t descriptor_type);
 
 
-        Port8bitSlow picMasterCommand;
-        Port8bitSlow picMasterData;
-        Port8bitSlow picSlaveCommand;
-        Port8bitSlow picSlaveData;
+        Port8bitSlow pic_master_command;
+        Port8bitSlow pic_master_data;
+        Port8bitSlow pic_slave_command;
+        Port8bitSlow pic_slave_data;
 
 
 public:
     InterruptManager(GlobalDescriptorTable* gdt);
     ~InterruptManager();
 
-    static uint32_t HandleInterrupt(uint8_t interruptNumber, uint32_t esp);
-    uint32_t DoHandleInterrupt(uint8_t interruptNumber, uint32_t esp);
+    static uint32_t HandleInterrupt(uint8_t interrupt_number, uint32_t esp);
+    uint32_t DoHandleInterrupt(uint8_t interrupt_number, uint32_t esp);
 
     static void IgnoreInterruptRequest();
     static void HandleInterruptRequest0x01();  //keyboard int

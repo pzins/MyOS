@@ -7,7 +7,7 @@
 
 
 void printf(char* str) {
-    static uint16_t*  VideoMemory = (uint16_t*) 0xB8000;
+    static uint16_t*  video_memory = (uint16_t*) 0xB8000;
 
     static uint8_t x = 0, y = 0;
 
@@ -28,7 +28,7 @@ void printf(char* str) {
                 break;
             default:
                 uint16_t s = (0x0700 | str[i]);
-                VideoMemory[80*y+x] = s;
+                video_memory[80*y+x] = s;
                 ++x;
                 break;
         }
@@ -39,7 +39,7 @@ void printf(char* str) {
         if(y >= 25) {
             for(y = 0; y < 25; ++y)
                 for(x = 0; x < 80; x++)
-                    VideoMemory[80*y+x] = (VideoMemory[80*y+x] & 0xFF00) | ' ';
+                    video_memory[80*y+x] = (video_memory[80*y+x] & 0xFF00) | ' ';
             x = 0;
             y = 0;
         }
@@ -57,7 +57,7 @@ void printHex(uint8_t n) {
 class PrintfKeyboardEventHandler : public KeyboardEventHandler
 {
 public:
-    void onKeyDown(char c) {
+    void OnKeyDown(char c) {
         char* foo = " ";
         foo[0] = c;
         printf(foo);
@@ -74,21 +74,21 @@ public:
         // offset = 0;
         // buttons = 0;
 
-        static uint16_t*  VideoMemory = (uint16_t*) 0xB8000;
+        static uint16_t*  video_memory = (uint16_t*) 0xB8000;
 
 
-        VideoMemory[80*12+40] = ((VideoMemory[80*12+40] & 0xF000) >> 4) |
-                              ((VideoMemory[80*12+40] & 0x0F00) << 4) |
-                              (VideoMemory[80*12+40] & 0x00FF);
+        video_memory[80*12+40] = ((video_memory[80*12+40] & 0xF000) >> 4) |
+                              ((video_memory[80*12+40] & 0x0F00) << 4) |
+                              (video_memory[80*12+40] & 0x00FF);
 
 
     }
-    void onMouseMove(int xoffset, int yoffset) {
-        static uint16_t*  VideoMemory = (uint16_t*) 0xB8000;
+    void OnMouseMove(int xoffset, int yoffset) {
+        static uint16_t*  video_memory = (uint16_t*) 0xB8000;
 
-        VideoMemory[80*y+x] = ((VideoMemory[80*y+x] & 0xF000) >> 4) |
-                          ((VideoMemory[80*y+x] & 0x0F00) << 4) |
-                          (VideoMemory[80*y+x] & 0x00FF);
+        video_memory[80*y+x] = ((video_memory[80*y+x] & 0xF000) >> 4) |
+                          ((video_memory[80*y+x] & 0x0F00) << 4) |
+                          (video_memory[80*y+x] & 0x00FF);
 
         x += xoffset;
         if(x < 0) x = 0;
@@ -99,14 +99,14 @@ public:
         if(y >= 25) y = 24;
 
 
-        VideoMemory[80*y+x] = ((0xFFFF & 0xF000) >> 4) |
-                              ((VideoMemory[80*y+x] & 0x0F00) << 4) |
-                              (VideoMemory[80*y+x] & 0x00FF);
+        video_memory[80*y+x] = ((0xFFFF & 0xF000) >> 4) |
+                              ((video_memory[80*y+x] & 0x0F00) << 4) |
+                              (video_memory[80*y+x] & 0x00FF);
     }
-    void onMouseDown(uint8_t button) {
+    void OnMouseDown(uint8_t button) {
 
     }
-    void onMouseUp(uint8_t button) {
+    void OnMouseUp(uint8_t button) {
 
     }
 };
@@ -117,28 +117,27 @@ extern "C" constructor end_ctors;
 extern "C" void callConstrutors() {
      for(constructor* i = &start_ctors; i != &end_ctors; ++i)
         (*i)();
-
 }
 
 extern "C" void kernelMain(void* mutliboot_structure, uint32_t magicnumber)
 {
-    printf("Lacazette Tolisso!!!\n");
     GlobalDescriptorTable gdt;
     InterruptManager interrupts(&gdt);
     printf("Initializing Hardware, Stage 1\n");
 
-    DriverManager drvManager;
+    DriverManager drv_manager;
 
-    PrintfKeyboardEventHandler kbhandler;
-    KeyboardDriver keyboard(&interrupts, &kbhandler);
-    drvManager.AddDriver(&keyboard);
+    PrintfKeyboardEventHandler kb_handler;
+    KeyboardDriver keyboard(&interrupts, &kb_handler);
+    drv_manager.AddDriver(&keyboard);
 
-    MouseToConsole mousehandler;
-    MouseDriver mouse(&interrupts, &mousehandler);
-    drvManager.AddDriver(&mouse);
+/*
+    MouseToConsole mouse_handler;
+    MouseDriver mouse(&interrupts, &mouse_handler);
+    drv_manager.AddDriver(&mouse);
     printf("Initializing Hardware, Stage 2\n");
-
-    drvManager.ActivateAll();
+*/
+    drv_manager.ActivateAll();
     interrupts.Activate();
     printf("Initializing Hardware, Stage 3\n");
 
