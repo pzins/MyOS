@@ -1,4 +1,4 @@
-.set IRQ_BASE, 0x20
+.set IRQ_BASE, 0x20 # car c'est bien de garder les 32 premieres entrées de la IDT pour les exceptions
 
 .section .text
 

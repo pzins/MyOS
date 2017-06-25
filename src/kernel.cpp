@@ -10,32 +10,28 @@ void printf(char* str) {
     static uint16_t*  video_memory = (uint16_t*) 0xB8000;
 
     static uint8_t x = 0, y = 0;
+    //define color : foreground 4 LSB and background 3 MSB
+    uint16_t color = 0x10;
 
-    // *((char*)0xb8000) = 0x4c;
-    // *((char*)0xb8001) = 0x07;
-
-    // *((int*)0xb8000)=0x0759074c;
-    // *((int*)0xb8004)=0x074e074f;
-    // *((short*)0xb8008)=0x0720;
-    // *((int*)0xb800a)=0x074c074f;
-
+    //loop over the string
     for(int i = 0; str[i] != '\0'; ++i) {
-
         switch(str[i]) {
             case '\n':
                 y++;
                 x = 0;
                 break;
             default:
-                uint16_t s = (0x0700 | str[i]);
+                uint16_t s = ((color<<8) | str[i]);
                 video_memory[80*y+x] = s;
                 ++x;
                 break;
         }
+        // jump to new line
         if(x >= 80) {
             ++y;
             x = 0;
         }
+        // screen full : clean and goto begin
         if(y >= 25) {
             for(y = 0; y < 25; ++y)
                 for(x = 0; x < 80; x++)
@@ -125,6 +121,8 @@ extern "C" void callConstrutors() {
 
 extern "C" void kernelMain(void* mutliboot_structure, uint32_t magicnumber)
 {
+    printf("Lacazette");
+    while(1);
     GlobalDescriptorTable gdt;
     InterruptManager interrupts(&gdt);
     printf("Initializing Hardware, Stage 1\n");

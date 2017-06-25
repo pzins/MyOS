@@ -21,8 +21,8 @@ void MouseEventHandler::OnMouseMove(int offset_x, int offset_y) {
 
 }
 
-MouseDriver::MouseDriver(InterruptManager* manager, MouseEventHandler* handler_)
-: InterruptHandler(0x2C, manager),
+MouseDriver::MouseDriver(InterruptManager* manager, MouseEventHandler* handler_) :
+InterruptHandler(0x2C, manager),
 handler(handler_),
 data_port(0x60),
 command_port(0x64)
@@ -43,7 +43,7 @@ void MouseDriver::Activate() {
     command_port.Write(0x60); //set state
     data_port.Write(status);
     command_port.Write(0xD4);
-    data_port.Write(0xf4);
+    data_port.Write(0xF4);
     data_port.Read();
 }
 
@@ -68,7 +68,7 @@ uint32_t MouseDriver::HandleInterrupt(uint32_t esp) {
 
         for(uint8_t i = 0; i < 3; ++i)
         {
-            if((buffer[0]& (0x01 << i)) != (buttons & (0x01 < i))){
+            if((buffer[0] & (0x01 << i)) != (buttons & (0x01 < i))){
                 if(buttons & (0x1<<1))
                     handler->OnMouseUp(i+1);
                 else

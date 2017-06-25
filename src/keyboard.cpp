@@ -21,12 +21,12 @@ command_port(0x64) {
 void KeyboardDriver::Activate() {
     while(command_port.Read() & 0x1)
         data_port.Read();
-    command_port.Write(0xae); //activate interrupt
+    command_port.Write(0xAE); //activate interrupt
     command_port.Write(0x20); //get current state
     uint8_t status = (data_port.Read() | 1) & ~0x10;
     command_port.Write(0x60); //set state
     data_port.Write(status);
-    data_port.Write(0xf4);
+    data_port.Write(0xF4);
 }
 
 KeyboardDriver::~KeyboardDriver() {

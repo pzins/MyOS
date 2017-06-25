@@ -42,8 +42,8 @@ void InterruptManager::SetInterruptDescriptorTableEntry(
 
      }
 
-InterruptManager::InterruptManager(GlobalDescriptorTable* gdt)
-:pic_master_command(0x20),
+InterruptManager::InterruptManager(GlobalDescriptorTable* gdt) :
+pic_master_command(0x20),
 pic_master_data(0x21),
 pic_slave_command(0xA0),
 pic_slave_data(0xA1)
@@ -92,14 +92,14 @@ void InterruptManager::Activate() {
     if(active_interrupt_manager != 0)
         active_interrupt_manager->Deactivate();
     active_interrupt_manager = this;
-    asm("sti");
+    asm("sti"); //disable IF flag
 }
 
 void InterruptManager::Deactivate() {
     if(active_interrupt_manager == this)
     {
         active_interrupt_manager = 0;
-        asm("cli");
+        asm("cli"); //enable IF flag
     }
 }
 
