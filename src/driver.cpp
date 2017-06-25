@@ -22,9 +22,11 @@ void Driver::Deactivate() {
 }
 
 
-DriverManager::DriverManager() {
-        num_drivers = 0;
+DriverManager::DriverManager() : num_drivers(0) {
+
 }
+
+void printf(char*);
 
 void DriverManager::AddDriver(Driver* dr) {
     drivers[num_drivers++] = dr;

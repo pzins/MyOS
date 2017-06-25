@@ -21,8 +21,8 @@ void printf(char* str) {
                 x = 0;
                 break;
             default:
-                uint16_t s = ((color<<8) | str[i]);
-                video_memory[80*y+x] = s;
+                uint16_t s = ((color << 8) | str[i]);
+                video_memory[80 * y + x] = s;
                 ++x;
                 break;
         }
@@ -70,39 +70,34 @@ private:
     int8_t x, y;
 public:
 
-    MouseToConsole() {
-        // offset = 0;
-        // buttons = 0;
+    MouseToConsole()
+     {
+         uint16_t* video_memory = (uint16_t*)0xb8000;
+         x = 40;
+         y = 12;
+         video_memory[80*y+x] = (~video_memory[80*y+x] & 0x0F00) << 4
+                              | (video_memory[80*y+x] & 0xF000) >> 4
+                              | (video_memory[80*y+x] & 0x00FF);
+     }
 
-        static uint16_t*  video_memory = (uint16_t*) 0xB8000;
+     virtual void OnMouseMove(int x_offset, int y_offset)
+     {
+         static uint16_t* video_memory = (uint16_t*)0xb8000;
+         video_memory[80*y+x] = (video_memory[80*y+x] & 0x0F00) << 4
+                              | (video_memory[80*y+x] & 0xF000) >> 4
+                              | (video_memory[80*y+x] & 0x00FF);
 
+         x += x_offset;
+         if(x >= 80) x = 79;
+         if(x < 0) x = 0;
+         y += y_offset;
+         if(y >= 25) y = 24;
+         if(y < 0) y = 0;
 
-        video_memory[80*12+40] = ((video_memory[80*12+40] & 0xF000) >> 4) |
-                              ((video_memory[80*12+40] & 0x0F00) << 4) |
-                              (video_memory[80*12+40] & 0x00FF);
-
-
-    }
-    void OnMouseMove(int xoffset, int yoffset) {
-        static uint16_t*  video_memory = (uint16_t*) 0xB8000;
-
-        video_memory[80*y+x] = ((video_memory[80*y+x] & 0xF000) >> 4) |
-                          ((video_memory[80*y+x] & 0x0F00) << 4) |
-                          (video_memory[80*y+x] & 0x00FF);
-
-        x += xoffset;
-        if(x < 0) x = 0;
-        if(x >= 80) x = 79;
-
-        y -= yoffset;
-        if(y < 0) y = 0;
-        if(y >= 25) y = 24;
-
-
-        video_memory[80*y+x] = ((0xFFFF & 0xF000) >> 4) |
-                              ((video_memory[80*y+x] & 0x0F00) << 4) |
-                              (video_memory[80*y+x] & 0x00FF);
-    }
+         video_memory[80*y+x] = (video_memory[80*y+x] & 0x0F00) << 4
+                              | (video_memory[80*y+x] & 0xF000) >> 4
+                              | (video_memory[80*y+x] & 0x00FF);
+     }
     void OnMouseDown(uint8_t button) {
 
     }
@@ -122,7 +117,7 @@ extern "C" void callConstrutors() {
 extern "C" void kernelMain(void* mutliboot_structure, uint32_t magicnumber)
 {
     printf("Lacazette");
-    while(1);
+
     GlobalDescriptorTable gdt;
     InterruptManager interrupts(&gdt);
     printf("Initializing Hardware, Stage 1\n");
@@ -133,12 +128,11 @@ extern "C" void kernelMain(void* mutliboot_structure, uint32_t magicnumber)
     KeyboardDriver keyboard(&interrupts, &kb_handler);
     drv_manager.AddDriver(&keyboard);
 
-/*
     MouseToConsole mouse_handler;
     MouseDriver mouse(&interrupts, &mouse_handler);
     drv_manager.AddDriver(&mouse);
     printf("Initializing Hardware, Stage 2\n");
-*/
+
     drv_manager.ActivateAll();
     interrupts.Activate();
     printf("Initializing Hardware, Stage 3\n");
